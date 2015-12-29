@@ -185,27 +185,25 @@ bool CE_curve::contains(const CE_point* p){
 }
 
 int CE_curve::getRequestSecurityLength(){
-	int N = strlen(mpz_get_str(NULL,2,this->n));		
-	int requested_security_strength;
+	int N = strlen(mpz_get_str(NULL,2,this->n));
 	if (N>=512){
-		requested_security_strength = 256;			
+		return 256;			
 	}
 	else if (N>=384){
-		requested_security_strength = 192;
+		return 192;
 	}
 	else if (N>=256){
-		requested_security_strength = 128;
+		return 128;
 	}
 	else if (N>=224){
-		requested_security_strength = 112;
+		return 112;
 	}
 	else if (N>=160){
-		requested_security_strength = 80;
+		return 80;
 	}
 	else{
-		requested_security_strength = -1;
+		return -1;
 	}
-	return requested_security_strength;
 }
 
 

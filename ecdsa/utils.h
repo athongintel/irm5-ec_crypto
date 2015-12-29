@@ -18,8 +18,8 @@ private:
 public:
 	utils();
 	~utils();
-	static char* getRandomString(int length);
-	static int Base64Decode(char* b64message, unsigned char** buffer, size_t* length);
+	static int getRandomString(char* myRandomData, int length);
+	static int Base64Decode(char* b64message, size_t* length, unsigned char** buffer);
 	static int Base64Encode(const unsigned char* buffer, size_t length, char** b64text);
 	static int split(const char* input, const char delimiter, char** output);
 	static void getRandomNumber(mpz_t* value, int securityLength);

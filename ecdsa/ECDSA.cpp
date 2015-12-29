@@ -156,9 +156,9 @@ bool ECDSA::verifySignature(const char* message, const char* signature){
 			}
 			else{
 				checkSuccess = false;				
-			}		
-			return checkSuccess;
+			}
 		}
+		return checkSuccess;
 	}
 }
 

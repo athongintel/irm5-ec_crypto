@@ -157,11 +157,13 @@ int main(int argc, char **argv)
 			goto error;
 		}
 		printf("OK");
-				
+		
 		//random state, seed from urandom
 		gmp_randstate_t randomstate;
 		gmp_randinit_default(randomstate);		
 		mpz_t seed;
+		mpz_init(seed);
+		
 		int N = ec_curve->getRequestSecurityLength();
 		utils::getRandomNumber(&seed, N/8);
 		gmp_randseed(randomstate, seed);
@@ -169,7 +171,7 @@ int main(int argc, char **argv)
 		mpz_t random_c;
 		mpz_init(random_c);
 		mpz_rrandomb(random_c, randomstate, N+64);
-				
+			
 		//calculate d = (c mod (n-1))+1
 		mpz_t final_d;
 		mpz_t tmp;
@@ -284,9 +286,9 @@ int main(int argc, char **argv)
 		}
 		
 		//retrieve private key from base64
-		unsigned char* prikey = new unsigned char[256];				
+		unsigned char* prikey;// = new unsigned char[256];				
 		size_t length;
-		if (!utils::Base64Decode(prikeybase64, &prikey, &length)){
+		if (!utils::Base64Decode(prikeybase64, &length, &prikey)){
 			printf("\nError: bad base64 private key encoding");
 			goto error;
 		}
@@ -296,8 +298,8 @@ int main(int argc, char **argv)
 		mpz_init_set_str(p, (char*)prikey, 10);
 		ECDSA ecdsa = ECDSA(ec_curve, NULL, &p);
 		//1. decode the message
-		unsigned char* messageDecoded = new unsigned char[MESSAGE_MAX_LENGTH];		
-		if (!utils::Base64Decode(argv[3], &messageDecoded, &length))
+		unsigned char* messageDecoded;// = new unsigned char[MESSAGE_MAX_LENGTH];		
+		if (!utils::Base64Decode(argv[3], &length, &messageDecoded))
 		{
 			printf("\nError: bad base64 message encoding");
 			goto error;
@@ -352,14 +354,14 @@ int main(int argc, char **argv)
 		}
 		
 		//retrieve public key from base64
-		unsigned char* pubkeyx = new unsigned char[256];			
-		unsigned char* pubkeyy = new unsigned char[256];
+		unsigned char* pubkeyx;// = new unsigned char[256];			
+		unsigned char* pubkeyy;// = new unsigned char[256];
 		size_t length;
-		if (!utils::Base64Decode(publicbase64x, &pubkeyx, &length)){
+		if (!utils::Base64Decode(publicbase64x, &length, &pubkeyx)){
 			printf("\nError: bad base64 public key encoding");
 			goto error;
 		}
-		if (!utils::Base64Decode(publicbase64y, &pubkeyy, &length)){
+		if (!utils::Base64Decode(publicbase64y, &length, &pubkeyy)){
 			printf("\nError: bad base64 public key encoding");
 			goto error;
 		}
@@ -368,15 +370,15 @@ int main(int argc, char **argv)
 		
 		//SIGNATURE VERIFICATION
 		//1. decode base64 the message and signature						
-		unsigned char* messageDecoded = new unsigned char[MESSAGE_MAX_LENGTH];				
-		if (!utils::Base64Decode(argv[3], &messageDecoded, &length))
+		unsigned char* messageDecoded;				
+		if (!utils::Base64Decode(argv[3], &length, &messageDecoded))
 		{
 			printf("\nError: bad base64 message encoding");
 			goto error;
 		}		
 
-		unsigned char* signatureDecoded = new unsigned char[MESSAGE_MAX_LENGTH];
-		if (!utils::Base64Decode(argv[4], &signatureDecoded, &length))
+		unsigned char* signatureDecoded;
+		if (!utils::Base64Decode(argv[4], &length, &signatureDecoded))
 		{
 			printf("\nError: bad base64 signature encoding");
 			goto error;

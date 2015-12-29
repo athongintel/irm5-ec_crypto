@@ -32,7 +32,7 @@ size_t utils::calcDecodeLength(const char* b64input) { //Calculates the length o
 	return (len*3)/4 - padding;
 }
 
-int utils::Base64Decode(char* b64message, unsigned char** buffer, size_t* length) { //Decodes a base64 encoded string
+int utils::Base64Decode(char* b64message, size_t* length, unsigned char** buffer) { //Decodes a base64 encoded string
 	BIO *bio, *b64;
 
 	int decodeLen = calcDecodeLength(b64message);
@@ -72,31 +72,36 @@ int utils::Base64Encode(const unsigned char* buffer, size_t length, char** b64te
 	return (0); //success
 }
 
-char* utils::getRandomString(const int length){
-	int randomData = open("/dev/random", O_RDONLY);
+int utils::getRandomString(char* myRandomDataOutput, const int length){
+	int randomData = open("/dev/urandom", O_RDONLY);
 	char myRandomData[length];
 	size_t randomDataLen = 0;
 	while (randomDataLen < sizeof myRandomData)
 	{
 		ssize_t result = read(randomData, myRandomData + randomDataLen, (sizeof myRandomData) - randomDataLen);
-		if (result < 0)
+		if (result <= 0)
 		{
-			// error, unable to read /dev/random 
+			printf("\ne");
 		}
 		randomDataLen += result;
 	}
 	close(randomData);
-	return myRandomData;
+	strcpy(myRandomDataOutput, myRandomData);
+	for (int i=0; i<length;i++){
+		if (myRandomDataOutput[i]==0) myRandomDataOutput[i]=1;
+	}
+	myRandomDataOutput[length]='\0';
+	return strlen(myRandomDataOutput);
 }
 
 int utils::split(const char* input, const char delimiter, char** output){
 	int i=0;
 	int j=0;
 	int count=0;	
-
+		
 	do{
 		if (j==0){
-			output[count] = new char[1024];
+			output[count] = (char*) malloc(sizeof (char) * 1024);	
 		}
 		char c = (char) input[i];
 		if (c==delimiter || c=='\0' || c=='\n'){
@@ -117,10 +122,11 @@ int utils::split(const char* input, const char delimiter, char** output){
 }
 
 void utils::getRandomNumber(mpz_t* value, int securityLength){
-	char* randomString = utils::getRandomString(securityLength/8);
-	mpz_init(*value);
-	for (int i=0;i<strlen(randomString);i++){
-		mpz_mul_ui(*value, *value, 256);
-		mpz_add_ui(*value, *value, randomString[i]);
-	}	
+	char randomString[securityLength/8];
+	utils::getRandomString(randomString, securityLength/8);		
+	int length = strlen(randomString);
+	for (int i=0;i<length;i++){
+		mpz_mul_ui(*value, *value, 256);		
+		mpz_add_ui(*value, *value, (unsigned char) randomString[i]);
+	}
 }
