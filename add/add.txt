@@ -1,1 +1,0 @@
-./Debug/main.cpp.o ./Debug/CE_point.cpp.o ./Debug/CE_curve.cpp.o
