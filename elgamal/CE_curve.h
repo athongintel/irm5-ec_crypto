@@ -22,6 +22,7 @@ public:
 	CE_point* add(const CE_point* P, const CE_point* Q);
 	CE_point* mul(const CE_point* P, const mpz_t* k);
 	CE_point* dbl(const CE_point* P);
+	CE_point* opposite(const CE_point* P);
 	bool contains(const CE_point* P);
 	int getRequestSecurityLength();
 	~CE_curve();

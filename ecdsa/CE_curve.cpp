@@ -161,6 +161,15 @@ CE_point* CE_curve::dbl(const CE_point* P){
 	}
 }
 
+CE_point* CE_curve::opposite(const CE_point* P){
+	mpz_t sum;
+	mpz_init_set(sum, P->x);
+	mpz_add(sum, sum, P->y);
+	mpz_mod(sum, sum, this->p);
+	
+	CE_point* result = new CE_point(&P->x, &sum);
+}
+
 bool CE_curve::contains(const CE_point* p){
 	if (p->inf){		
 		return true;	
